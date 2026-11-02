@@ -46,8 +46,8 @@ export default function LoginPage() {
       const response = await api.post('/auth/login', { phone, password });
       const token = response.data.accessToken;
       
-      const restaurantNameAr = settings?.nameAr || 'وهمي برجر';
-      const restaurantNameEn = settings?.nameEn || 'Wahmy Burger';
+      const restaurantNameAr = settings?.nameAr || 'مطعمي';
+      const restaurantNameEn = settings?.nameEn || 'Restaurant';
 
       const userFullNameAr = response.data.user?.fullNameAr || response.data.user?.fullName || response.data.user?.name || restaurantNameAr;
       const userFullNameEn = response.data.user?.fullNameEn || response.data.user?.fullName || response.data.user?.name || restaurantNameEn;
@@ -72,9 +72,8 @@ export default function LoginPage() {
   const primaryColor = settings?.primaryColor || '#030712'; // افتراضي غامق
   const secondaryColor = settings?.secondaryColor || '#e11d48'; // افتراضي أحمر/روز
 
-  // الاعتماد على اسم المطعم المعرّف في إعدادات الآدمن (مع دعم الاسم العربي والإنجليزي)
-  const displayNameAr = settings?.nameAr || 'وهمي برجر';
-  const displayNameEn = settings?.nameEn || 'Wahmy Burger';
+  const displayNameAr = settings?.nameAr || 'المطعم';
+  const displayNameEn = settings?.nameEn || 'Restaurant';
 
   return (
     <div 
@@ -85,14 +84,20 @@ export default function LoginPage() {
       <div className="w-full max-w-md rounded-3xl bg-white/90 backdrop-blur-xl border border-white/20 p-8 shadow-2xl text-slate-800">
         
         <div className="text-center">
-          <div className="relative w-16 h-16 mx-auto mb-4 rounded-2xl bg-white border border-slate-100 shadow-md flex items-center justify-center p-2">
-            <Image 
-              src={settings?.logoUrl || "/logo.png"} 
-              alt="Logo" 
-              width={64} 
-              height={64} 
-              className="object-contain w-full h-full" 
-            />
+          <div className="relative w-16 h-16 mx-auto mb-4 rounded-2xl bg-white border border-slate-100 shadow-md flex items-center justify-center p-2 overflow-hidden">
+            {settings?.logoUrl ? (
+              <Image 
+                src={settings.logoUrl} 
+                alt="Logo" 
+                width={64} 
+                height={64} 
+                className="object-contain w-full h-full" 
+              />
+            ) : (
+              <span className="text-xl font-bold" style={{ color: secondaryColor }}>
+                {displayNameAr.charAt(0)}
+              </span>
+            )}
           </div>
           <h1 className="text-2xl font-bold" style={{ color: secondaryColor }}>
             {displayNameAr} - {displayNameEn}

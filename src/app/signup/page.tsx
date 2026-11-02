@@ -12,6 +12,7 @@ interface DynamicSettings {
   primaryColor?: string;
   secondaryColor?: string;
   nameAr?: string;
+  nameEn?: string;
 }
 
 export default function SignupPage() {
@@ -24,11 +25,11 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null);
   const [settings, setSettings] = useState<DynamicSettings | null>(null);
 
-  // جلب إعدادات الآدمن (اللوجو، الألوان، واسم المنصة) عند تحميل الصفحة
+  // جلب إعدادات الآدمن الديناميكية باستخدام مثيل الـ api المتصل بالإنترنت والباك إند
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/settings');
+        const res = await api.get('/settings');
         if (res.data) {
           setSettings(res.data);
         }
@@ -53,7 +54,6 @@ export default function SignupPage() {
         password,
       });
 
-      // تخزين الاسمين ورقم الهاتف في الـ localStorage
       localStorage.setItem('phone', phone);
       localStorage.setItem('userNameAr', nameAr);
       localStorage.setItem('userNameEn', nameEn);
@@ -73,6 +73,7 @@ export default function SignupPage() {
 
   const primaryColor = settings?.primaryColor || '#f0f9ff';
   const secondaryColor = settings?.secondaryColor || '#1d4ed8';
+  const displayNameAr = settings?.nameAr || 'المطعم';
 
   return (
     <div 
@@ -83,14 +84,20 @@ export default function SignupPage() {
       <div className="w-full max-w-md bg-white/90 backdrop-blur-xl border border-white/90 rounded-3xl p-8 shadow-2xl">
 
         <div className="text-center mb-6">
-          <div className="relative w-16 h-16 mx-auto mb-3 rounded-2xl bg-white border border-slate-100 shadow-md flex items-center justify-center p-2">
-            <Image 
-              src={settings?.logoUrl || "/logo.png"} 
-              alt="Logo" 
-              width={64} 
-              height={64} 
-              className="object-contain w-full h-full" 
-            />
+          <div className="relative w-16 h-16 mx-auto mb-3 rounded-2xl bg-white border border-slate-100 shadow-md flex items-center justify-center p-2 overflow-hidden">
+            {settings?.logoUrl ? (
+              <Image 
+                src={settings.logoUrl} 
+                alt="Logo" 
+                width={64} 
+                height={64} 
+                className="object-contain w-full h-full" 
+              />
+            ) : (
+              <span className="text-xl font-bold" style={{ color: secondaryColor }}>
+                {displayNameAr.charAt(0)}
+              </span>
+            )}
           </div>
           <h1 className="text-2xl font-bold text-slate-900 flex items-center justify-center gap-2">
             <span>إنشاء حساب جديد</span>
