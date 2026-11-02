@@ -11,6 +11,7 @@ interface DynamicSettings {
   primaryColor?: string;
   secondaryColor?: string;
   nameAr?: string;
+  nameEn?: string;
 }
 
 export default function LoginPage() {
@@ -21,11 +22,11 @@ export default function LoginPage() {
   const [settings, setSettings] = useState<DynamicSettings | null>(null);
   const router = useRouter();
 
-  // جلب إعدادات الآدمن (اللوجو والألوان) عند تحميل الصفحة
+  // جلب إعدادات الآدمن الديناميكية باستخدام مثيل الـ api المتصل بالإنترنت والباك إند
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/settings');
+        const res = await api.get('/settings');
         if (res.data) {
           setSettings(res.data);
         }
@@ -45,8 +46,11 @@ export default function LoginPage() {
       const response = await api.post('/auth/login', { phone, password });
       const token = response.data.accessToken;
       
-      const userFullNameAr = response.data.user?.fullNameAr || response.data.user?.fullName || response.data.user?.name || 'صديق بلبن';
-      const userFullNameEn = response.data.user?.fullNameEn || response.data.user?.fullName || response.data.user?.name || 'B.Laban Friend';
+      const restaurantNameAr = settings?.nameAr || 'وهمي برجر';
+      const restaurantNameEn = settings?.nameEn || 'Wahmy Burger';
+
+      const userFullNameAr = response.data.user?.fullNameAr || response.data.user?.fullName || response.data.user?.name || restaurantNameAr;
+      const userFullNameEn = response.data.user?.fullNameEn || response.data.user?.fullName || response.data.user?.name || restaurantNameEn;
 
       localStorage.setItem('token', token);
       localStorage.setItem('phone', phone);
@@ -68,6 +72,10 @@ export default function LoginPage() {
   const primaryColor = settings?.primaryColor || '#030712'; // افتراضي غامق
   const secondaryColor = settings?.secondaryColor || '#e11d48'; // افتراضي أحمر/روز
 
+  // الاعتماد على اسم المطعم المعرّف في إعدادات الآدمن (مع دعم الاسم العربي والإنجليزي)
+  const displayNameAr = settings?.nameAr || 'وهمي برجر';
+  const displayNameEn = settings?.nameEn || 'Wahmy Burger';
+
   return (
     <div 
       className="flex min-h-screen items-center justify-center p-4 transition-all duration-300" 
@@ -87,7 +95,7 @@ export default function LoginPage() {
             />
           </div>
           <h1 className="text-2xl font-bold" style={{ color: secondaryColor }}>
-            {settings?.nameAr || 'بـلـبـن - B.Laban'}
+            {displayNameAr} - {displayNameEn}
           </h1>
           <p className="mt-1 text-xs text-slate-500">تسجيل الدخول برقم الهاتف والمتابعة</p>
         </div>
