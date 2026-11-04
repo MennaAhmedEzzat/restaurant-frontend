@@ -1,8 +1,7 @@
 import axios from 'axios';
 
-// إنشاء API Client متصل بـ NestJS Backend
 export const api = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://restaurant-backend-psi-sand.vercel.app',
   headers: {
     'Content-Type': 'application/json',
   },
